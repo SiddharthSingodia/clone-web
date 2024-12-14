@@ -1,28 +1,59 @@
-# User Registration Endpoint
+# UBER Clone Backend API
 
-## Description
+## Overview
+This is the backend API for an UBER clone application. It provides various endpoints for user management, ride booking, captain (driver) management, and other essential features of a ride-hailing service.
 
-The `/user/register` endpoint is used to create a new user account. It accepts a JSON payload with the user's details and returns a JSON Web Token (JWT) upon successful registration.
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Environment Variables](#environment-variables)
+- [API Documentation](#api-documentation)
+  - [User Endpoints](#user-endpoints)
+  - [Captain Endpoints](#captain-endpoints)
+- [Database Schema](#database-schema)
+- [Error Handling](#error-handling)
 
-## Request
+## Prerequisites
+- Node.js (v14 or higher)
+- MongoDB
+- npm or yarn package manager
 
-### Method
+## Installation
+1. Clone the repository
+```bash
+git clone <repository-url>
+cd UBER/backend
+```
 
-* `POST`
+2. Install dependencies
+```bash
+npm install
+```
 
-### URL
+3. Set up environment variables (see [Environment Variables](#environment-variables) section)
 
-* `/users/register`
+4. Start the server
+```bash
+npm start
+```
 
-### Request Body
+## Environment Variables
+Create a `.env` file in the root directory with the following variables:
+```
+PORT=8000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+```
 
-The request body should contain the following fields:
+## API Documentation
 
-* `fullname`: An object with `firstname` and `lastname` properties
-* `email`: A string representing the user's email address
-* `password`: A string representing the user's password
+### User Endpoints
 
-Example:
+#### 1. User Registration
+- **Endpoint:** `/users/register`
+- **Method:** `POST`
+- **Description:** Create a new user account
+- **Request Body:**
 ```json
 {
   "fullname": {
@@ -32,44 +63,111 @@ Example:
   "email": "johndoe@example.com",
   "password": "password123"
 }
+```
+- **Response:** Returns JWT token upon successful registration
 
-User Profile Endpoint
-Description
-The /user/profile endpoint is used to retrieve the authenticated user's profile information.
+#### 2. User Profile
+- **Endpoint:** `/user/profile`
+- **Method:** `GET`
+- **Description:** Retrieve authenticated user's profile
+- **Authentication:** Required (JWT Token)
+- **Response:** User profile data
 
-Request
-Method
-GET
-URL
-/user/profile
-Authentication
-Requires a valid JWT token in the Authorization header.
-Response
-200 OK: Returns the user's profile data in JSON format.
-401 Unauthorized: If the JWT token is invalid or missing.
-Implementation
-@user.service.js: Provides the getUserProfile method to retrieve the user's profile data.
-@user.routes.js: Defines the /user/profile route and handles the GET request.
-@user.model.js: Defines the User model and its schema.
-@user.controller.js: Provides the getUserProfile method to handle the GET request and return the user's profile data.
+### Captain Endpoints
 
+#### 1. Captain Registration
+- **Endpoint:** `/captain/register`
+- **Method:** `POST`
+- **Description:** Register a new captain (driver) in the system
+- **Request Body:**
+```json
+{
+  "fullname": {
+    "firstname": "string",
+    "lastname": "string"
+  },
+  "email": "string",
+  "password": "string",
+  "vehicle": {
+    "color": "string",
+    "plate": "string",
+    "capacity": "number",
+    "vehicleType": "car | motorcycle | auto"
+  }
+}
+```
+- **Validation Rules:**
+  - Email must be a valid email address
+  - First name must be at least 3 characters long
+  - Password must be at least 6 characters long
+  - Vehicle color must be at least 3 characters long
+  - Vehicle plate must be at least 3 characters long
+  - Vehicle capacity must be a number
+  - Vehicle type must be one of: car, motorcycle, or auto
 
-Logout Endpoint
-Description
-The /users/logout endpoint is used to log out the authenticated user by invalidating their JWT token.
+- **Success Response:**
+  - Status Code: 201
+```json
+{
+  "token": "JWT_TOKEN",
+  "captain": {
+    // Captain details including profile and vehicle information
+  }
+}
+```
+- **Error Responses:**
+  - Status Code: 400
+    - When validation fails
+    - When captain with same email already exists
+```json
+{
+  "errors": [
+    {
+      "msg": "Error message",
+      "param": "field_name"
+    }
+  ]
+}
+```
 
-Request
-Method
-POST
-URL
-/users/logout
-Authentication
-Requires a valid JWT token in the Authorization header.
-Response
-200 OK: Returns a success message indicating the user has been logged out.
-401 Unauthorized: If the JWT token is invalid or missing.
-Implementation
-@user.service.js: Provides the logoutUser method to invalidate the user's JWT token.
-@user.routes.js: Defines the /users/logout route and handles the POST request.
-@user.model.js: Defines the User model and its schema.
-@user.controller.js: Provides the logoutUser method to handle the POST request and return a success message.
+#### 2. Captain Status Update
+- **Endpoint:** `/captain/status`
+- **Method:** `PUT`
+- **Description:** Update captain's availability status
+- **Authentication:** Required
+
+## Database Schema
+
+### User Model
+- fullname (Object)
+  - firstname (String)
+  - lastname (String)
+- email (String, unique)
+- password (String, hashed)
+- createdAt (Date)
+
+### Captain Model
+- Basic profile information
+- Vehicle details
+- Current status
+- Rating
+
+## Error Handling
+The API uses standard HTTP status codes:
+- 200: Success
+- 201: Created
+- 400: Bad Request
+- 401: Unauthorized
+- 403: Forbidden
+- 404: Not Found
+- 500: Internal Server Error
+
+## Contributing
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a new Pull Request
+
+## License
+This project is licensed under the MIT License.
