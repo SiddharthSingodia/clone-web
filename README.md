@@ -103,38 +103,37 @@ JWT_SECRET=your_jwt_secret_key
   - Vehicle color must be at least 3 characters long
   - Vehicle plate must be at least 3 characters long
   - Vehicle capacity must be a number
-  - Vehicle type must be one of: car, motorcycle, or auto
+  - Vehicle type must be one of: car, motorcycle, auto
 
-- **Success Response:**
-  - Status Code: 201
+#### 2. Captain Login
+- **Endpoint:** `/captain/login`
+- **Method:** `POST`
+- **Description:** Authenticate a captain and receive a JWT token
+- **Request Body:**
 ```json
 {
-  "token": "JWT_TOKEN",
-  "captain": {
-    // Captain details including profile and vehicle information
-  }
+  "email": "string",
+  "password": "string"
 }
 ```
-- **Error Responses:**
-  - Status Code: 400
-    - When validation fails
-    - When captain with same email already exists
-```json
-{
-  "errors": [
-    {
-      "msg": "Error message",
-      "param": "field_name"
-    }
-  ]
-}
-```
+- **Validation Rules:**
+  - Email must be a valid email address
+  - Password must be at least 6 characters long
+- **Response:** Returns JWT token upon successful login
 
-#### 2. Captain Status Update
-- **Endpoint:** `/captain/status`
-- **Method:** `PUT`
-- **Description:** Update captain's availability status
-- **Authentication:** Required
+#### 3. Captain Profile
+- **Endpoint:** `/captain/profile`
+- **Method:** `GET`
+- **Description:** Retrieve authenticated captain's profile
+- **Authentication:** Required (JWT Token)
+- **Response:** Captain profile data
+
+#### 4. Captain Logout
+- **Endpoint:** `/captain/logout`
+- **Method:** `GET`
+- **Description:** Logout the captain and invalidate the JWT token
+- **Authentication:** Required (JWT Token)
+- **Response:** Success message upon logout
 
 ## Database Schema
 
